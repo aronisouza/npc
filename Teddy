@@ -1,0 +1,59 @@
+//- Npc que fica andando no centro da cidade
+//- Ao clicar nele poderá ocorrer alguma das opções:
+//- -- Ele mata a pessoa
+//- -- Ele da um item
+//- -- Ele pune com @mute
+//- A uns efeitos e sons disparados
+//- Os sons podem  ser encontrados na pasta WAV
+prontera,156,204,0	script	Teddy#rgt	TEDDY_BEAR,{
+if( #tepppm >= gettimetick(2) )
+{
+	dispbottom "[ NPC ] Teddy: Espere ai você levou uma punição de 1 minuto!!!";
+	end;
+}
+switch( rand(1,18) )
+{
+	case 2: case 10: case 18: soundeffectall "yehaa.wav",0; specialeffect2 414;	getitem 607, 1;	break;
+	case 1: case 5: case 16: case 12: case 14: case 3: soundeffectall "headshot.wav",0; specialeffect2 1;
+	atcommand "@die";
+	break;
+	case 7: 
+		soundeffectall "holyshit.wav",0; 
+		atcommand "@mute 1 "+strcharinfo(0);
+		set #tepppm, gettimetick(2) + 60;
+	break;
+	case 4: soundeffectall "drumpet.wav",0; getitem 617, 1; break;
+	case 6:
+		switch( rand(1,11) ) {
+			case 1: getitem 603, 1; break;
+			case 2:	getitem 12065, 1; break;
+			case 3:	getitem 12060, 1; break;
+			case 4:	getitem 12055, 1; break;
+			case 5:	getitem 12050, 1; break;
+			case 6:	getitem 664, 1; break;
+			case 7:	getitem 665, 1; break;
+			case 8:	getitem 666, 1; break;
+			case 9:	getitem 667, 1; break;
+			case 10: getitem 12044, 1; break;
+			case 11: getitem 12070, 1; break;
+		}
+		soundeffectall "drumpet.wav",0;
+	break;	
+	default: soundeffectall "ownage.wav",0; specialeffect2 531; 
+	atcommand "@die";
+	break;	
+}
+end;
+OnInit:
+   npcspeed 150;
+   initnpctimer;
+end;
+
+OnTimer15000:
+	switch( rand(0,1) ) {
+		case 1: npcwalkto 156-rand(1,9), 204-rand(1,9);	break;
+		default: npcwalkto 156+rand(1,9), 204+rand(1,9); break;
+	}
+stopnpctimer;
+initnpctimer;
+}
