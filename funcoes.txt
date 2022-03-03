@@ -1,0 +1,249 @@
+// - Função para dar Rop's
+// - gera roups entre os valores > @rs
+// - mostra para o jogador quanto roups ele ganhou e total de roups que tem
+function	script	funcGeraRops	{
+	set .@flk, rand(0,10000);
+	if(.@flk<9886) set .@rs,10; 
+	else if(.@flk>=9886 && .@flk<=9985) set .@rs,35;
+	else if(.@flk>=9986 && .@flk<=9993) set .@rs,75; 
+	else if(.@flk>=9994 && .@flk<=9997) set .@rs,150; 
+	else if(.@flk>=9998 && .@flk<=9999) set .@rs,300;
+	else if(.@flk==10000) set .@rs,1000;
+	set #CASHPOINTS,#CASHPOINTS+.@rs;
+	dispbottom "[ NPC ] " +getarg(0)+ ": Você acaba de ganhar [ " +.@rs+ " ] Rops e tem atualmente [ " +callfunc("funcConvertZeny",#CASHPOINTS)+ " ] Rops.";
+	return;
+}
+
+// - Serve para verificar coisas digitadas pelo invocador
+// - Serve tanto para números quanto letras e não deixa ser digitado vazio ou 0
+// - callfunc("funcDigit",1) para verificar números 
+// - callfunc("funcDigit",2)  para verificar textos
+function	script	funcDigit	{
+	while( 1 )
+	{
+		if( getarg(0) == 1 )
+		{
+			input .@digit;
+			if( .@digit != 0 ) return .@digit;
+		}
+		else
+		{
+			input .@digit$;
+			if( .@digit$ != "" ) return .@digit$;
+		}
+		mes "^DD0000[ Administrador ] ^B5B5B5" + callfunc("funcNomeServer") + "^000000";
+		mes "Você não pode deixar ^DD00000^000000 ou ^DD0000vazio^000000.";
+		mes "Digite novamente.";
+		next;
+	}
+}
+
+
+// - Retorna o nome do servidor
+function	script	funcNomeServer	{
+	return "MemoriesRo";
+}
+
+
+// - Uma função para checar se o item é donativo do servidor
+// - Retorna 1 se for donativo e 0 se não for
+// - callfunc("funcDone",IDitem)  para verificar
+function	script	funcChecaDonate	{
+	if( 
+    getarg(0) == 512 || 
+    getarg(0) == 513 
+	) return 1;
+	else return 0;
+}
+
+
+// - Comando para administrador enviar mensagem para jogador
+// - A mensagem será exibida sobre o jogador e aparecerá na tela com o nome do jogador
+-	script	fld	-1,{
+	OnInit:
+		bindatcmd "fldmpp",strnpcinfo(3)+"::OnFldmpp",95,99;
+	end;
+	OnFldmpp:
+	if( getgmlevel() == 99 ) 
+	{
+		while( 1 )
+		{
+			if( @nomews$ == "")
+			{
+				mes "Nome da Pessoa";
+				input .@mno$;
+				set @nomews$, .@mno$;
+				next;
+			}
+			mes "Enviando mensagem para:";
+			mes "-> "+@nomews$;
+			mes "Digite ^00DD00_m^000000 para mudar";
+			mes "Digite ^00DD00_s^000000 para sair";
+			mes "^008FFF---------------------------------^000000";
+			input .@msnws$;
+			if(.@msnws$ == "_s") {close;}
+			if(.@msnws$ == "_m")
+			{
+				next;
+				mes "Novo nome";
+				input .@mno$;
+				set @nomews$, .@mno$;
+				next;
+				mes "^DD0000[ ^008FFFSua mensagem ^DD0000]^000000";
+				input .@msnws$;
+			}
+			else
+			{
+				mes "^DD0000[ ^008FFFSua mensagem ^DD0000]^000000";
+			}
+			mes .@msnws$;
+			message @nomews$, @nomews$+": "+.@msnws$;
+			next;
+		}
+	}
+end;
+}
+
+
+// - Função para escolher um item para premio aleatorio
+// - funcPremio,0 para quest
+// - funcPremio,1 para consumivel
+// - funcPremio,2 para Unidades Ajudas
+// - funcPremio,3 BOX consumiveis
+// - funcPremio,4 BOX ajuda
+// - funcPremio,5 Quest do servidor
+// - funcPremio,6 para itens cabeça original
+// - funcPremio,10 para presença
+// - funcPremio,11 Devil Square
+// - funcPremio,98 para itens missão 0/98
+// - funcPremio,99 para itens missão 99
+// - "funcPremio",0
+function	script	funcPremio	{
+	switch(getarg(0))
+	{
+		case 0:
+			.@idItem = 512;
+		break;
+		case 1: 
+			.@idItem = $premio_1[rand(getarraysize($premio_1))];
+		break;
+		case 2:
+			.@idItem = $premio_2[rand(getarraysize($premio_2))];
+		break;
+		case 3:
+			.@idItem = $premio_3[rand(getarraysize($premio_3))];
+		break;
+		case 4:
+			.@idItem = $premio_4[rand(getarraysize($premio_4))];
+		break;
+		case 6: 
+			query_sql("SELECT `ID`  FROM `item_db` WHERE `id` BETWEEN 5000 AND 5860 AND `type` = 5 ORDER BY RAND() LIMIT 1",@idItem);
+			.@idItem = @idItem;
+		break;
+		case 98:
+			query_sql("SELECT `iditem` FROM `funcpremio` WHERE `tipo`='98' ORDER BY RAND() LIMIT 1", @idItem);
+			.@idItem = @idItem;
+		break;
+		case 99:
+			query_sql("SELECT `iditem` FROM `funcpremio` WHERE `tipo`='99' ORDER BY RAND() LIMIT 1", @idItem);
+			.@idItem = @idItem;
+		break;
+		
+	}
+	return .@idItem;
+}
+
+
+// - Usada para dar bufffs nos player
+function	script	buffFunc	{
+switch( getgmlevel() )
+{
+	case 0: set .@Tm, 320000; break;
+	case 1: set .@Tm, 600000; break;
+	default: set .@Tm, 1800000; break;
+}
+	emotion 51;
+	sc_end Eff_Poison;
+	sc_end Eff_Silence;
+	sc_end Eff_Blind;
+	sc_end Eff_Confusion;
+	sc_end Eff_Curse;
+	sc_end Eff_Hallucination;
+	sc_start 23,  .@Tm, 10;	// Improve Concentrate
+	sc_start 32,  .@Tm, 10;	// Increase Agi
+	sc_start 29,  .@Tm, 10;	// Angelus
+	sc_start 30,  .@Tm, 10;	// Blessing
+	sc_start 110, .@Tm,  5;	// Concentration
+	if($BUF_EVENT)
+	{
+		sc_start 21,  .@Tm, 10;	// Endure
+		sc_start 49,  .@Tm,  1;	// Energy Coat
+		sc_start 48,  .@Tm,  1;	// Crazy Uproar
+		sc_start 22,  .@Tm, 10;	// Twohand Quicken
+		sc_start 150, .@Tm,  1;	// Onehand Quicken
+		sc_start 35,  .@Tm,  5;	// Impositio Manus
+		sc_start 39,  .@Tm, 10;	// Kyrie Eleison
+		sc_start 40,  .@Tm,  5;	// Magnificat
+		sc_start 41,  .@Tm,  5;	// Gloria
+		sc_start 43,  .@Tm,  5;	// Adrenaline Rush
+		sc_start 44,  .@Tm,  5;	// Weapon Perfection
+		sc_start 45,  .@Tm,  5;	// Power-Thrust
+		sc_start 46,  .@Tm,  5;	// Maximize Power
+		sc_start 145, .@Tm,  1;	// Full Adrenaline Rush
+		sc_start 76,  .@Tm, 10;	// Guard
+		sc_start 77,  .@Tm, 10;	// Shield Reflect
+		sc_start 86,  .@Tm, 10;	// Spear Quicken
+		sc_start 184, .@Tm,  1;	// Summon Spirit Sphere
+		sc_start 83,  .@Tm, 10;	// Hindsight
+		sc_start 108, .@Tm,  5;	// Aura Blade
+		sc_start 109, .@Tm, 10;	// Parrying
+		sc_start 122, .@Tm, 10;	// Shattering Strike
+		sc_start 123, .@Tm,  1;	// Cart Boost
+		sc_start 156, .@Tm,  1;	// Maximum Power Thrust
+		sc_start 121, .@Tm, 10;	// Wind Walker
+		sc_start 154, .@Tm,  5;	// Double Casting
+		sc_start 115, .@Tm,  5;	// Assumptio
+		sc_start 125, .@Tm,  5;	// Reject Sword
+		sc_start 120, .@Tm, 10;	// True Sight
+		sc_start 159, .@Tm,  1;	// Shrink
+		sc_start 151, .@Tm, 10;	// Preserve
+		
+		sc_start SC_EXPBOOST, .@Tm, 160; //Manual de Combate
+	}
+	percentheal 100, 100;
+return;
+}
+
+
+//- Função para checar itens proibidos no jogo
+//- Donates ou outros que quiser
+//- Mesma funcionalidade da funcChecaDonate. Só que essa são de itens cadastrados no Banco de dados
+function	script	funcCheqDone	{
+	query_sql("SELECT `id` FROM `funccheqdone` WHERE `iditembloqueado` = '"+getarg(0)+"'", .@idItem);
+	return ((.@idItem>=1)?true:false);
+}
+
+
+// - Função para transformar zeny 1123456789 em 1,123,456,789
+// - Apenas para ficar mais bonito na janela do npc
+// callfunc("funcConvertZeny",7777777)  // return "7,777,777"
+function	script	funcConvertZeny	{
+	set .@str$, getarg(0);
+	for (set .@i,getstrlen(.@str$)-3; .@i>0; set .@i,.@i-3)
+		set .@str$, insertchar(.@str$,",",.@i);
+	return .@str$;
+}
+
+
+-	script	resetVariavel	-1,{
+OnPCLoginEvent:
+	set bufftime,0;
+	set msgtime,0;
+	set fdTipo$,0;
+	end;
+}
+
+
+function	script	alertaTrava	{
+	return "»» ^DD0000ESCOLHA UM ITEM E CLIQUE EM COMPRAR. CASO NÃO FAÇA ISSO SEU PERSONAGEM FICARÁ TRAVADO!^000000";
+}
