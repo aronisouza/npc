@@ -1,0 +1,97 @@
+//- As callfunc: funcNomeServer, funcConvertZeny, funcDigit
+//- EStão no NPC funcoes.txt
+prontera,132,217,5	script	Troca Moedas	4_M_HUMERCHANT,{
+set .@nd$, "^FF0000[ Atrix ] ^B5B5B5"+ callfunc("funcNomeServer") +"^000000";
+setarray .@Zbronze[0],	673, 10000, 10;
+setarray .@Zprata[0],	675, 25000, 25;
+setarray .@Zouro[0],	671, 75000, 75;
+setarray .@Zplatina[0],	677, 125000, 125;
+setarray .@Zmytril[0],	674, 1000000, 1;
+
+mes .@nd$;
+mes "Ola Viajante, sou um colecionador de moedas.";
+mes "Estou aqui para comprar moedas e vender também.";
+mes "Em que posso ajudar?";
+next;
+switch(select( "- Quanto você paga por minha moeda?", "- Quero comprar uma moeda!", "- Quero vender minha moeda!", "- Cancelar." ))
+{
+	case 1:
+			mes .@nd$;
+			mes "Os Preços são os seguintes!";
+			mes "^0000BB" +getitemname(.@Zbronze[0])+ "^000000 = ^DD0000" +callfunc("funcConvertZeny",.@Zbronze[1])+ "^007700 (" +.@Zbronze[2]+ "k)^000000";
+			mes "^0000BB" +getitemname(.@Zprata[0])+ "^000000 = ^DD0000" +callfunc("funcConvertZeny",.@Zprata[1])+ "^007700 (" +.@Zprata[2]+ "k)^000000";
+			mes "^0000BB" +getitemname(.@Zouro[0])+ "^000000 = ^DD0000" +callfunc("funcConvertZeny",.@Zouro[1])+ "^007700 (" +.@Zouro[2]+ "k)^000000";
+			mes "^0000BB" +getitemname(.@Zplatina[0])+ "^000000 = ^DD0000" +callfunc("funcConvertZeny",.@Zplatina[1])+ "^007700 (" +.@Zplatina[2]+ "k)^000000";
+			mes "^0000BB" +getitemname(.@Zmytril[0])+ "^000000 = ^DD0000" +callfunc("funcConvertZeny",.@Zmytril[1])+ "^007700 (" +.@Zmytril[2]+ "kk)^000000";
+			close;
+	case 2:
+			mes .@nd$;
+			mes "Qual moeda você deseja comprar?";
+			next;
+			switch( select( "- " +getitemname(.@Zouro[0])+ ".", "- " +getitemname(.@Zprata[0])+ ".", "- " +getitemname(.@Zbronze[0])+ ".", "- " +getitemname(.@Zmytril[0])+ ".", "- " +getitemname(.@Zplatina[0])+ "." ) ) {
+				case 1:	setarray .@moedaC[0], .@Zouro[0], .@Zouro[1];break;
+				case 2:	setarray .@moedaC[0], .@Zprata[0], .@Zprata[1];break;
+				case 3:	setarray .@moedaC[0], .@Zbronze[0], .@Zbronze[1];break;
+				case 4:	setarray .@moedaC[0], .@Zmytril[0], .@Zmytril[1];break;
+				case 5:	setarray .@moedaC[0], .@Zplatina[0], .@Zplatina[1];break;
+			}
+			mes .@nd$;
+			mes "Quantas ^0000BB" +getitemname(.@moedaC[0])+ "^000000 você deseja comprar?";
+			next;
+			set .@mCqnt, callfunc("funcDigit",1);
+			set .@trasacao, (.@moedaC[1] * .@mCqnt);
+			if(Zeny < .@trasacao)
+			{
+				mes .@nd$;
+				mes "Você não tem Zeny sufuciente.";
+				close;
+			}
+			
+			mes .@nd$;
+			mes "Ok você receberá ^006400"+callfunc("funcConvertZeny",.@mCqnt)+" ^0000BB" +getitemname(.@moedaC[0])+ "^000000.";
+			Zeny -= .@trasacao;
+			close2;
+				getitem .@moedaC[0], .@mCqnt;
+			end;
+	case 3:
+			mes .@nd$;
+			mes "Qual moeda você deseja vender?";
+			next;
+			switch( select( "- " +getitemname(.@Zouro[0])+ ".", "- " +getitemname(.@Zprata[0])+ ".", "- " +getitemname(.@Zbronze[0])+ ".", "- " +getitemname(.@Zmytril[0])+ ".", "- " +getitemname(.@Zplatina[0])+ "." ) ) {
+				case 1:	setarray .@moedaT[0], .@Zouro[0], .@Zouro[1], .@Zouro[2];break;
+				case 2:	setarray .@moedaT[0], .@Zprata[0], .@Zprata[1], .@Zprata[2];break;
+				case 3:	setarray .@moedaT[0], .@Zbronze[0], .@Zbronze[1], .@Zbronze[2];break;
+				case 4:	setarray .@moedaT[0], .@Zmytril[0], .@Zmytril[1], .@Zmytril[2];break;
+				case 5:	setarray .@moedaT[0], .@Zplatina[0], .@Zplatina[1], .@Zplatina[2];break;
+			}
+			mes .@nd$;
+			mes "Quantas ^0000BB" +getitemname(.@moedaT[0])+ "^000000 você deseja vender?";
+			next;
+			set .@mCqnt, callfunc("funcDigit",1);
+			set .@qntZeny, (.@moedaT[1] * .@mCqnt);
+			if(countitem(.@moedaT[0]) < .@mCqnt)
+			{
+				mes .@nd$;
+				mes "Você não tem ^DD0000"+callfunc("funcConvertZeny",.@mCqnt)+" ^0000BB" +getitemname(.@moedaT[0])+ "^000000 ai.";
+				close;
+			}
+			mes .@nd$;
+			if(.@qntZeny+Zeny > 1000000000)
+			{
+				mes "Você perderá ^DD0000" +callfunc("funcConvertZeny",(1000000000-(.@qntZeny+Zeny))*(-1))+ "^000000 zenys.";
+				mes "Deseja continuar?";
+				next;
+				if(select("- Sim","- Não")==2) close;
+			}
+			else mes "Ok você receberá ^0000BB"+callfunc("funcConvertZeny",.@qntZeny)+"^000000z.";			
+			delitem .@moedaT[0], .@mCqnt;
+			close2;
+				Zeny += .@qntZeny;
+			end;
+	case 4:
+			mes .@nd$;
+			mes "Muito bem, quando precisar de alguma moeda volte!";
+			close;
+}
+close;
+}
