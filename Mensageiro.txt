@@ -1,0 +1,101 @@
+//- Envia mensagem para todo servidor
+//- As funções podem ser encontradas no arquivo funcoes.txt
+prontera,139,183,5	script	Mensageiro	4_M_CHIEF_IRIN,{
+
+set .@dimdim,10000;
+
+set .@d$, "^0000FF[ Mensageiro ] " +callfunc("funcNomeServer")+ "^000000";
+
+if( getgmlevel() > 39 ) {
+	while( 1 ) {
+	    if( select( "- Mandar Mensagem.", "- Sair." ) == 2 ) close;
+		input .@msg$;
+		announce strcharinfo(0) + ": " +.@msg$,0;
+	}
+}
+
+
+if( msgtime ) { 
+	mes .@d$;
+	mes "Espere 1 minuto para enviar outra mensagem.";
+	close;
+}
+
+// se for VIP
+mes .@d$;
+if( getgmlevel() >= 0 ) {
+	mes "Escolha uma cor e digite a mensagem.";
+	next;
+	switch( select( "- Rosa Claro", "- Verde Claro.", "- Lilas.", "- Amarelo.", "- Azul claro.") ) {
+		case 1:
+			input .@msg$;
+				announce strcharinfo(0) + ": " +.@msg$,bc_all,0xFFC0C0;
+		break;
+		case 2:
+			input .@msg$;
+				announce strcharinfo(0) + ": " +.@msg$,bc_all,0x80FF80;
+		break;
+		case 3:
+			input .@msg$;
+				announce strcharinfo(0) + ": " +.@msg$,bc_all,0xC0C0FF;
+		break;
+		case 4:
+			input .@msg$;
+				announce strcharinfo(0) + ": " +.@msg$,bc_all,0xFFD800;
+		break;
+		case 5: 
+			input .@msg$;
+				announce strcharinfo(0) + ": " +.@msg$,bc_all,0x00FFFF;
+		break;
+	}
+	set msgtime,1;
+	addtimer 60000, strnpcinfo(3)+"::OnMsg";
+	close;
+}
+
+// Jogador normal
+mes "Será lhe cobrado ^FF0000 " +callfunc("funcConvertZeny",.@dimdim)+ "z ^000000 para mandar uma mensagem.";
+next;
+if( select( "- Não quero mais.", "- Sim pode cobrar." ) == 1 ) close;
+if( (Zeny < .@dimdim) && (getgmlevel() < 1) ) {
+	mes .@d$;
+	mes "Você não tem o valor cobrado!!";
+	mes "Mais se você não falar para o Administrador eu lhe dou uma chance...";
+	next;
+	if( select( "- Eu não falo nada pra ele", "- Aff npc! isso não pode." ) == 1 ) {
+		mes .@d$;
+		mes "Não vai ser tão facil mais vamos tentar. Eu vou pensar em um número entre 1 / 10, e você vai ter que acertar.";
+		next;
+		set @randol,rand(1,10);
+		input @add;
+		if( @randol == @add ) {
+			mes .d$;
+			mes "Acertou miserável!";
+			next;
+			input .@msg$;
+			announce strcharinfo(0) + ": " +.@msg$,bc_all,0xFFD800;
+			set msgtime,1;
+			addtimer 60000, strnpcinfo(3)+"::OnMsg";
+			close;
+		}
+		mes .@d$;
+		mes "Não está com sorte hoje volte quando tiver Zeny suficiente.";
+		close;
+	}
+	close;
+}
+mes .@d$;
+mes "Digite a mensagem.";
+Zeny -= .@dimdim;
+next;
+input .@msg$;
+	announce strcharinfo(0) + ": " +.@msg$,bc_all,0xFFD800;
+	set msgtime,1;
+	addtimer 60000, strnpcinfo(3)+"::OnMsg";
+close;
+
+OnMsg: set msgtime,0; end;
+
+OnInit:
+	waitingroom "Mensageiro",0; end;
+}
