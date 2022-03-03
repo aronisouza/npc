@@ -1,0 +1,68 @@
+//- Cura e da buffs
+//- Com tempo de 5 segundos para pegar novamente.
+//- ADM pode liga e desligar $BUF_EVENT, pode ser visto na função buffFunc arquivo funcoes.txt
+-	script	Curandeira	-1,{
+	if(getgmlevel(getcharid(0)))
+	{
+		if($BUF_EVENT==0)set .cor$, "^DD0000OFF";
+		else set .cor$, "^00CD66ON";
+		mes "^0000FF[ NPC ]^B5B5B5 " +callfunc("funcNomeServer")+ "^000000";
+		mes "Status $BUF_EVENT "+ .cor$ + "^000000";
+		close2;
+		if(select(" • ^007700MUDAR^000000", " • ^DD0000BUFF^000000")==1) $BUF_EVENT=!$BUF_EVENT;
+	}
+	
+	if( !bufftime ) { 
+		callfunc("buffFunc");
+		dispbottom "[ NPC ] Curandeira: Obrigado por estar jogando com a gente!!";
+		set bufftime,1;
+		addtimer 5000, strnpcinfo(3)+"::Onbuff";
+		end;
+	}
+	dispbottom "# Curandeira: Espere 5 segundos #";
+	end;
+	Onbuff:
+		set bufftime,0;
+		end;
+}
+
+prontera,162,193,4	duplicate(Curandeira)	Curandeira#prt	909
+new_1-1,57,115,6	duplicate(Curandeira)	Curandeira#nasc	4_TOWER_10
+alberta,25,240,6	duplicate(Curandeira)	Curandeira#alb	4_TOWER_10
+aldebaran,135,118,6	duplicate(Curandeira)	Curandeira#ald	4_TOWER_10
+amatsu,200,79,4	duplicate(Curandeira)	Curandeira#ama	4_TOWER_10
+ayothaya,207,169,6	duplicate(Curandeira)	Curandeira#ayo	4_TOWER_10
+comodo,184,158,6	duplicate(Curandeira)	Curandeira#com	4_TOWER_10
+einbech,57,36,6	duplicate(Curandeira)	Curandeira#einbe	4_TOWER_10
+einbroch,57,202,6	duplicate(Curandeira)	Curandeira#einbr	4_TOWER_10
+geffen,115,72,6	duplicate(Curandeira)	Curandeira#gef	4_TOWER_10
+gonryun,156,122,6	duplicate(Curandeira)	Curandeira#gon	4_TOWER_10
+hugel,89,150,6	duplicate(Curandeira)	Curandeira#hun	4_TOWER_10
+izlude,125,118,5	duplicate(Curandeira)	Curandeira#izl	4_TOWER_10
+jawaii,250,139,4	duplicate(Curandeira)	Curandeira#jav	4_TOWER_10
+lighthalzen,152,100,6	duplicate(Curandeira)	Curandeira#ligh	4_TOWER_10
+louyang,226,103,4	duplicate(Curandeira)	Curandeira#lou	4_TOWER_10
+manuk,272,144,6	duplicate(Curandeira)	Curandeira#manu	4_TOWER_10
+mid_camp,203,289,6	duplicate(Curandeira)	Curandeira#mid	4_TOWER_10
+moc_ruins,72,164,4	duplicate(Curandeira)	Curandeira#mocR	4_TOWER_10
+morocc,153,97,6	duplicate(Curandeira)	Curandeira#moroc	4_TOWER_10
+moscovia,220,191,4	duplicate(Curandeira)	Curandeira#mosk	4_TOWER_10
+niflheim,212,182,5	duplicate(Curandeira)	Curandeira#niflh	4_TOWER_10
+payon,179,106,4	duplicate(Curandeira)	Curandeira#pay	4_TOWER_10
+rachel,125,116,6	duplicate(Curandeira)	Curandeira#rach	4_TOWER_10
+splendide,201,153,4	duplicate(Curandeira)	Curandeira#splen	4_TOWER_10
+thor_camp,249,74,4	duplicate(Curandeira)	Curandeira#thor	4_TOWER_10
+umbala,105,148,3	duplicate(Curandeira)	Curandeira#umba	4_TOWER_10
+veins,217,121,4	duplicate(Curandeira)	Curandeira#vei	4_TOWER_10
+xmas,143,136,4	duplicate(Curandeira)	Curandeira#xmas	4_TOWER_10
+yuno,164,45,4	duplicate(Curandeira)	Curandeira#yuno	4_TOWER_10
+ 
+// Duplicações (Renovação)
+// ================================================ ============
+brasilis,194,221,6	duplicate(Curandeira)	Curandeira#bras	4_TOWER_10
+//dewata,195,187,4	duplicate(Curandeira)	Curandeira#dew	4_TOWER_10
+//dicastes01,201,194,4	duplicate(Curandeira)	Curandeira#dicast	4_TOWER_10
+//ecl_in01,45,60,4	duplicate(Curandeira)	Curandeira#eclin	4_TOWER_10
+//malangdo,132,114,6	duplicate(Curandeira)	Curandeira#malan	4_TOWER_10
+//malaya,205,205,6	duplicate(Curandeira)	Curandeira#mala	4_TOWER_10
+//mora,55,152,4	duplicate(Curandeira)	Curandeira#mora	4_TOWER_10
