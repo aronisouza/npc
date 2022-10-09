@@ -48,7 +48,7 @@ function	script	funcNomeServer	{
 // - Uma função para checar se o item é donativo do servidor
 // - Retorna 1 se for donativo e 0 se não for
 // - callfunc("funcDone",IDitem)  para verificar
-function	script	funcChecaDonate	{
+function	script	funcDone	{
 	if( 
     getarg(0) == 512 || 
     getarg(0) == 513 
@@ -217,7 +217,7 @@ return;
 
 //- Função para checar itens proibidos no jogo
 //- Donates ou outros que quiser
-//- Mesma funcionalidade da funcChecaDonate. Só que essa são de itens cadastrados no Banco de dados
+//- Mesma funcionalidade da funcDone. Só que essa são de itens cadastrados no Banco de dados
 function	script	funcCheqDone	{
 	query_sql("SELECT `id` FROM `funccheqdone` WHERE `iditembloqueado` = '"+getarg(0)+"'", .@idItem);
 	return ((.@idItem>=1)?true:false);
